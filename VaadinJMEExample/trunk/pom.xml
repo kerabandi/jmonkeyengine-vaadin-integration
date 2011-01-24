@@ -1,0 +1,414 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.wholebrainprojecttutorials</groupId>
+	<name>JME Applet in Vaadin Application</name>
+	<version>1.0-SNAPSHOT</version>
+	<artifactId>jmevaadinapplication</artifactId>
+	<packaging>war</packaging>
+
+	<properties>
+		<project.build.name>applettest</project.build.name>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<lwjgl.natives>${project.build.directory}/natives</lwjgl.natives>
+		<natives>${basedir}/target/lib/natives/</natives>
+		<release.natives>natives/</release.natives>
+	</properties>
+	<description>Vaadin project rendering a 3d Applet using J Monkey Engine</description>
+
+
+	<build>
+		<finalName>${project.build.name}</finalName>
+		<plugins>
+
+			<!--
+				This is the surefire test plugin. Without this, tests would still
+				get run but we want to insert some configuration information into
+				the test run, so we do that like this.
+			-->
+			<!-- License PLugin -->
+			<plugin>
+				<groupId>com.mycila.maven-license-plugin</groupId>
+				<artifactId>maven-license-plugin</artifactId>
+				<version>1.5.1</version>
+				<configuration>
+					<header>src/main/resources/header.txt</header>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.4.2</version>
+				<configuration>
+					<workingDirectory>${project.build.outputDirectory}
+					</workingDirectory>
+					<excludes>
+						<exclude>**/**</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+
+			<!--
+				Responsible for putting the Maven version into the
+				wbc-view.properties file, so that it can be used as the version
+				shown in the client. NOTE: this can be done much more easily! See
+				http://maven.apache.org/guides/getting-started/index.html#How_do_I_filter_resource_files
+			-->
+			<!--
+				<plugin>
+				<groupId>com.google.code.maven-config-processor-plugin</groupId>
+				<artifactId>maven-config-processor-plugin</artifactId>
+				<version>1.8</version> <configuration>
+				<encoding>ISO-8859-1</encoding> <transformations> <transformation>
+				<type>properties</type>
+				<input>src/main/resources/wbc.properties</input>
+				<output>classes/wbc.properties</output>
+				<config>src/main/assembly/properties/properties-processing.xml</config>
+				</transformation> </transformations> </configuration> <executions>
+				<execution> <goals> <goal>process</goal> </goals> </execution>
+				</executions> </plugin>
+			-->
+
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.2</version>
+				<executions>
+         			 <execution>
+            			<goals>
+             			 <goal>sign</goal>
+          				  </goals>
+          			</execution>
+      			  </executions>
+				<configuration>
+				<systemProperty>
+                            <key>org.lwjgl.librarypath</key>
+                            <value>${lwjgl.native}</value>
+                        </systemProperty>
+					<!-- Sign the created jar -->
+					<keystore>.keystore</keystore>
+					<alias>m2m2m2</alias>
+					<storepass>m2m2m2</storepass>
+					<verify>true</verify>
+					<archive>
+						<index>true</index>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<!--
+								Implementation-Title and Implementation-Version come from the
+								POM by default
+							-->
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+						</manifest>
+						<manifestEntries>
+							<!-- Package format version - do not change -->
+							<Vaadin-Package-Version>1</Vaadin-Package-Version>
+
+							<!-- Add-on specific fields to update -->
+
+							<!--
+								Implementation-Title and Implementation-Version come from the
+								POM by default
+							-->
+							<!--
+								<Implementation-Title>${pom.name}</Implementation-Title>
+								<Implementation-Version>${pom.version}</Implementation-Version>
+							-->
+
+							<!-- Comma-separated list of widgetsets in the package -->
+							<Vaadin-Widgetsets>org.wholebrainprojecttutorials.jmevaadinapplication.WidgetSet</Vaadin-Widgetsets>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>                   
+	
+			<!-- Plugin in charge of copying neccessary dependencies to target directory. These 
+			dependencies are needed in the target dictory in order for the applet to work -->
+			<plugin>
+				<artifactId>maven-dependency-plugin</artifactId>
+					<executions>
+						<execution>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>copy</goal>
+								</goals>
+							<!-- Specify dependencies we want in the target directory -->
+							<configuration>
+								<outputDirectory>${project.build.directory}/${project.build.name}/VAADIN/widgetsets/org.wholebrainprojecttutorials.jmevaadinapplication.Widgetset</outputDirectory>
+							<artifactItems>
+							<artifactItem>
+								<groupId>org.wholebrainprojecttutorials</groupId>
+								<artifactId>jmeapplet</artifactId>
+								<version>1.0-SNAPSHOT</version>
+							</artifactItem>
+							<artifactItem>
+									<groupId>org.vaadin</groupId>
+									<artifactId>icepush-gwt</artifactId>
+									<version>0.1.2</version>
+								</artifactItem>		
+								<artifactItem>
+									<groupId>org.vaadin.addons</groupId>
+									<artifactId>icepush</artifactId>
+									<version>0.2.0</version>
+								</artifactItem>	
+								<artifactItem>
+									<groupId>org.vaadin</groupId>
+									<artifactId>icepush-util</artifactId>
+									<version>0.1.2</version>
+								</artifactItem>	
+								<artifactItem>
+										<groupId>commons-codec</groupId>
+										<artifactId>commons-codec</artifactId>
+										<version>1.3</version>
+									</artifactItem>
+																		<artifactItem>
+										<groupId>org.lwjgl</groupId>
+										<artifactId>lwjgl</artifactId>
+										<version>2.1</version>
+									</artifactItem>
+									<artifactItem>
+										<groupId>org.vaadin.addons</groupId>
+										<artifactId>appletintegration</artifactId>
+										<version>1.1.4</version>
+									</artifactItem>		
+									<artifactItem>
+										<groupId>org.lwjgl</groupId>
+										<artifactId>lwjgl_util</artifactId>
+										<version>2.1</version>
+									</artifactItem>			
+									<artifactItem>
+										<groupId>org.lwjgl</groupId>
+										<artifactId>lwjgl_util_applet</artifactId>
+										<version>2.1</version>
+									</artifactItem>										
+									<artifactItem>
+										<groupId>com.jmonkeyengine</groupId>
+										<artifactId>jme</artifactId>
+										<version>2.0.1</version>
+									</artifactItem>		
+									<artifactItem>
+										<groupId>commons-codec</groupId>
+										<artifactId>commons-codec</artifactId>
+										<version>1.2</version>
+									</artifactItem>
+									<artifactItem>
+										<groupId>commons-httpclient</groupId>
+										<artifactId>commons-httpclient</artifactId>
+										<version>3.1</version>
+									</artifactItem>	
+									<artifactItem>
+										<groupId>commons-logging</groupId>
+										<artifactId>commons-logging</artifactId>
+										<version>1.1.1</version>
+									</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<!-- Sign all the jars in the target directory -->
+			<plugin>
+ 				<groupId>org.apache.maven.plugins</groupId>
+ 				<artifactId>maven-jarsigner-plugin</artifactId>
+ 				<version>1.2</version>
+ 				<executions>
+ 					<execution>
+ 						<phase>prepare-package</phase>
+ 						<goals>
+							 <goal>sign</goal>
+						 </goals>
+ 						<configuration>
+ 							<archiveDirectory>${project.build.directory}/${project.build.name}/VAADIN/widgetsets/org.wholebrainprojecttutorials.jmevaadinapplication.Widgetset</archiveDirectory>
+ 							<keystore>.keystore</keystore>
+ 							<storepass>m2m2m2</storepass>
+ 							<keypass>m2m2m2</keypass>
+ 							<alias>m2m2m2</alias>
+ 						</configuration>
+ 					</execution>
+ 				</executions>
+ 			</plugin> 
+ 			
+ 			<plugin>
+				<groupId>com.googlecode.mavennatives</groupId>
+				<artifactId>maven-nativedependencies-plugin</artifactId>
+				<version>0.0.2</version>
+				<executions>
+					<execution>
+						<id>unpacknatives</id>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
+						
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+ 
+			<!-- Compiles your custom GWT components with the GWT compiler -->
+			<!--
+				A hosted mode browser for client-side widget debugging can be run
+				with the goal gwt:run after uncommenting the correct line below. A
+				remote debugger can then be connected to port 8998. Note that e.g. a
+				Jetty server should be running with the server side parts - use the
+				goal jetty:run .
+			-->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>gwt-maven-plugin</artifactId>
+				<version>1.3-SNAPSHOT</version>
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<configuration>
+							<!-- if you don't specify any modules, the plugin will find them -->
+								<modules>
+								<module>org.wholebrainprojecttutorials.jmevaadinapplication.Widgetset</module>
+								</modules>
+							<webappDirectory>${project.build.directory}/${project.build.name}/VAADIN/widgetsets</webappDirectory>
+							<!-- On Mac running Snow Leopard, add "-d32" -->
+							<!--
+								This causes error messages (but build works) in phase "package":
+								two processes would use the same debug port
+							-->
+							<!--
+								extraJvmArgs>-Xmx512M -Xss1024k -Xdebug
+								-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8998</extraJvmArgs
+							-->
+							<extraJvmArgs>-Xmx1024M -Xss1024k</extraJvmArgs>
+							<runTarget>wbc</runTarget>
+							<hostedWebapp>${project.build.directory}/${project.build.name}</hostedWebapp>
+							<noServer>true</noServer>
+							<port>8080</port>
+						</configuration>
+						<goals>
+						<goal>resources</goal>
+						<goal>compile</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+
+			<!--
+				A simple Jetty test server at http://localhost:8080/wbc can be
+				launched with the Maven goal jetty:run and stopped with jetty:stop
+			-->
+			<plugin>
+				<groupId>org.mortbay.jetty</groupId>
+				<artifactId>maven-jetty-plugin</artifactId>
+				<version>6.1.19</version>
+				<configuration>
+					<stopPort>9966</stopPort>
+					<stopKey>wbc</stopKey>
+					<!--
+						Redeploy every x seconds if changes are detected, 0 for no
+						automatic redeployment
+					-->
+					<scanIntervalSeconds>0</scanIntervalSeconds>
+					<!-- make sure Jetty also finds the widgetset -->
+					<webAppConfig>
+						<contextPath>/jmeapplet</contextPath>
+						<baseResource implementation="org.mortbay.resource.ResourceCollection">
+							<!--
+								Workaround for Maven/Jetty issue
+								http://jira.codehaus.org/browse/JETTY-680
+							-->
+							<!--
+								<resources>src/main/webapp,${project.build.directory}/${project.build.finalName}</resources>
+							-->
+							<resourcesAsCSV>src/main/webapp,${project.build.directory}/${project.build.name}</resourcesAsCSV>
+						</baseResource>
+					</webAppConfig>
+				</configuration>
+			</plugin>
+		</plugins>
+
+		<!--
+			This is needed for the sources required by the GWT compiler to be
+			included in the produced JARs
+		-->
+		<resources>
+			<resource>
+				<directory>src/main/java</directory>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.vaadin</groupId>
+			<artifactId>vaadin</artifactId>
+			<version>6.4.3</version>
+		</dependency>
+		<!--
+			This is also used by gwt-maven-plugin to deduce GWT version number.
+		-->
+		<dependency>
+			<groupId>com.google.gwt</groupId>
+			<artifactId>gwt-user</artifactId>
+			<version>2.0.3</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.wholebrainprojecttutorials</groupId>
+			<artifactId>jmeapplet</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+   			<groupId>org.vaadin.addons</groupId>
+   			<artifactId>appletintegration</artifactId>
+  		 <version>1.1.4</version>
+	</dependency>
+	<dependency>
+			<groupId>org.vaadin</groupId>
+			<artifactId>icepush-gwt</artifactId>
+			<version>0.1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.vaadin</groupId>
+			<artifactId>icepush-util</artifactId>
+			<version>0.1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.vaadin</groupId>
+			<artifactId>icepush</artifactId>
+			<version>0.1.2</version>
+		</dependency>
+	</dependencies>
+	
+	<repositories>
+                <repository>
+                        <id>openccdb-public</id>
+                        <url>http://openccdb.org:8081/nexus/content/groups/public</url>
+                </repository>
+                <repository>
+                        <id>openccdb-snapshot</id>
+                        <url>http://openccdb.org:8081/nexus/content/groups/public-snapshots</url>
+                </repository>
+                <repository>
+                        <id>openccdb-thirdparty</id>
+                        <url>http://openccdb.org:8081/nexus/content/repositories/thirdparty</url>
+                </repository>
+                <repository>
+   <id>vaadin-addons</id>
+   <url>http://maven.vaadin.com/vaadin-addons</url>
+</repository>
+        </repositories>
+        
+</project>
