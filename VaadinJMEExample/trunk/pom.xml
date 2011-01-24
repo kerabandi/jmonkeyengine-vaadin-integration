@@ -78,60 +78,7 @@
 					<source>1.5</source>
 					<target>1.5</target>
 				</configuration>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.2</version>
-				<executions>
-         			 <execution>
-            			<goals>
-             			 <goal>sign</goal>
-          				  </goals>
-          			</execution>
-      			  </executions>
-				<configuration>
-				<systemProperty>
-                            <key>org.lwjgl.librarypath</key>
-                            <value>${lwjgl.native}</value>
-                        </systemProperty>
-					<!-- Sign the created jar -->
-					<keystore>.keystore</keystore>
-					<alias>m2m2m2</alias>
-					<storepass>m2m2m2</storepass>
-					<verify>true</verify>
-					<archive>
-						<index>true</index>
-						<manifest>
-							<addClasspath>true</addClasspath>
-							<!--
-								Implementation-Title and Implementation-Version come from the
-								POM by default
-							-->
-							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-						</manifest>
-						<manifestEntries>
-							<!-- Package format version - do not change -->
-							<Vaadin-Package-Version>1</Vaadin-Package-Version>
-
-							<!-- Add-on specific fields to update -->
-
-							<!--
-								Implementation-Title and Implementation-Version come from the
-								POM by default
-							-->
-							<!--
-								<Implementation-Title>${pom.name}</Implementation-Title>
-								<Implementation-Version>${pom.version}</Implementation-Version>
-							-->
-
-							<!-- Comma-separated list of widgetsets in the package -->
-							<Vaadin-Widgetsets>org.wholebrainprojecttutorials.jmevaadinapplication.WidgetSet</Vaadin-Widgetsets>
-						</manifestEntries>
-					</archive>
-				</configuration>
-			</plugin>                   
+			</plugin>           
 	
 			<!-- Plugin in charge of copying neccessary dependencies to target directory. These 
 			dependencies are needed in the target dictory in order for the applet to work -->

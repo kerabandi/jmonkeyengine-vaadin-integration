@@ -1,8 +1,5 @@
 package org.wholebrainprojecttutorials.jmevaadinapplication;
 
-
-import java.util.concurrent.ConcurrentLinkedQueue;
-
 import org.wholebrainprojecttutorials.jmevaadinapplication.ui.MainLayout;
 
 import com.vaadin.ui.Window;

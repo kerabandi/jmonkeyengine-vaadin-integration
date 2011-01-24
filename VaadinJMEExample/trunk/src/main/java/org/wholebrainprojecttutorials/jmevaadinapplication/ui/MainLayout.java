@@ -131,7 +131,7 @@ public class MainLayout extends VerticalLayout implements
         final VerticalLayout l1 = new VerticalLayout();
         l1.setMargin(true);
         
-	    String APPLET_CLASS = "org.wholebrainprojecttutorials.jmeappletexample.SimpleJMEApplet";
+	    String APPLET_CLASS = "org.jmeappletintegration.example.SimpleJMEApplet";
 	    
 	    String[] APPLET_ARCHIVES = new String[] {
 	            "jmeapplet-1.0-SNAPSHOT.jar",
