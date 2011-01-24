@@ -1,0 +1,42 @@
+#summary One-sentence summary of this page.
+
+= Introduction =
+
+Running the examples from scratch.
+
+= Details =
+
+Requirements:
+1. Java JDK 1.5 or above, I recommend installing the latest 
+   JDK available. 
+
+2. Maven 2.1 or above.
+   - you can check to see if you have this maven version installed 
+     in your machine by opening a command prompt and typing
+     "mvn -version".  
+
+3. 150 MBspace in hard drive. 
+
+Optional:
+4. Text editor, if you are planning on making any changes to the 
+example I provided. I use Eclipse to edit my text files.
+
+Steps needed in order to run the provided example.
+
+Make sure you meet the requirements explained above.
+
+Option 1. Running project using command prompt. 
+
+1. Check-out the VaadinJMEAppletExample trunk to your workspace. 
+  
+2. Navigate from the command prompt to the parent folder holding the check-out project.
+Example: If you checked out your project to C://vaadinproject, navigate 
+to folder named "vaadinproject". 
+
+3.
+
+3. Once inside the folder, 
+Add your content here.  Format your content with:
+  * Text in *bold* or _italic_
+  * Headings, paragraphs, and lists
+  * Automatic links to other wiki pages
