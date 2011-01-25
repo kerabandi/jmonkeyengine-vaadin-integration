@@ -31,7 +31,6 @@ Make sure you meet the requirements explained above.
 
 1. Check-out the VaadinJMEAppletExample trunk to your workspace. 
 
-  
 *2*. Navigate from the command prompt to the parent folder holding the check-out project.
 Example: If you checked out your project to C://vaadinproject, navigate 
 to folder named "vaadinproject". 
@@ -41,3 +40,6 @@ to folder named "vaadinproject".
 4. After building the project, you will be able to deploy the application to your browser by entering "mvn jetty:run" in your command prompt. This will deploy your application to a local server at port :8080. You will know this task is done when you see "Started Jetty Server" displayed in your command prompt. 
 
 5. After deploying the application, go to a supported web browser and type "http://localhost:8080/jme-vaadin-applet". You will be prompted to accept the applet certificate, click "Ok" in order for applet to show.
+
+==Making changes to the Applet==
+If you want to modify the Applet code, you will have to check out the JMEAppletIntegration trunk found in this googlecode project to your workspace. The main class in this project is SimpleJMEApplet.java. You will have to recompile this project into a jar and add it to your Vaadin Application project in order to see the changes.
