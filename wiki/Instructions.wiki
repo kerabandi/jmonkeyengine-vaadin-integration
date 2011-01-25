@@ -43,10 +43,3 @@ to folder named "vaadinproject".
 4. After building the project, you will be able to deploy the application to your browser by entering "mvn jetty:run" in your command prompt. This will deploy your application to a local server at port :8080. You will know this task is done when you see "Started Jetty Server" displayed in your command prompt. 
 
 5. After deploying the application, go to a supported web browser and type "http://localhost:8080/jme-vaadin-applet". You will be prompted to accept the applet certificate, click "Ok" in order for applet to show.
-      
-
-3. Once inside the folder, 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
