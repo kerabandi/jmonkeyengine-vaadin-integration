@@ -5,10 +5,10 @@
 }
 
 .mystyle {
-    font-family: fantasy;
-    font-style:  italic;
+    font-family: Arial,Helvetica,sans-serif;;
+    font-style:  normal;
     font-size:   24px;
-    font-weight: bold;
+    font-weight: normal;
     height: auto;
 }
  

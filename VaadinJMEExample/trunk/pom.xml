@@ -3,20 +3,27 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.wholebrainprojecttutorials</groupId>
 	<name>JME Applet in Vaadin Application</name>
-	<version>1.0-SNAPSHOT</version>
+	<version>1.0</version>
 	<artifactId>jmevaadinapplication</artifactId>
 	<packaging>war</packaging>
 
 	<properties>
-		<project.build.name>applettest</project.build.name>
+		<project.build.name>jme-vaadin-applet</project.build.name>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<lwjgl.natives>${project.build.directory}/natives</lwjgl.natives>
 		<natives>${basedir}/target/lib/natives/</natives>
-		<release.natives>natives/</release.natives>
+	<release.natives>natives/</release.natives>
 	</properties>
 	<description>Vaadin project rendering a 3d Applet using J Monkey Engine</description>
 
-
+	<developers>
+		<developer>
+			<id>jrmartin</id>
+			<name>Jesus R Martinez</name>
+			<email>jrmartin@ncmir.ucsd.edu</email>
+		</developer>
+	</developers>
+	
 	<build>
 		<finalName>${project.build.name}</finalName>
 		<plugins>
@@ -78,116 +85,119 @@
 					<source>1.5</source>
 					<target>1.5</target>
 				</configuration>
-			</plugin>           
-	
-			<!-- Plugin in charge of copying neccessary dependencies to target directory. These 
-			dependencies are needed in the target dictory in order for the applet to work -->
+			</plugin>
+
+			<!--
+				Plugin in charge of copying neccessary dependencies to target
+				directory. These dependencies are needed in the target dictory in
+				order for the applet to work
+			-->
 			<plugin>
 				<artifactId>maven-dependency-plugin</artifactId>
-					<executions>
-						<execution>
-								<phase>prepare-package</phase>
-								<goals>
-									<goal>copy</goal>
-								</goals>
-							<!-- Specify dependencies we want in the target directory -->
-							<configuration>
-								<outputDirectory>${project.build.directory}/${project.build.name}/VAADIN/widgetsets/org.wholebrainprojecttutorials.jmevaadinapplication.Widgetset</outputDirectory>
+				<executions>
+					<execution>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<!-- Specify dependencies we want in the target directory -->
+						<configuration>
+							<outputDirectory>${project.build.directory}/${project.build.name}/VAADIN/widgetsets/org.wholebrainprojecttutorials.jmevaadinapplication.Widgetset</outputDirectory>
 							<artifactItems>
-							<artifactItem>
-								<groupId>org.wholebrainprojecttutorials</groupId>
-								<artifactId>jmeapplet</artifactId>
-								<version>1.0-SNAPSHOT</version>
-							</artifactItem>
-							<artifactItem>
+								<artifactItem>
+									<groupId>org.wholebrainprojecttutorials</groupId>
+									<artifactId>jmeapplet</artifactId>
+									<version>1.0</version>
+								</artifactItem>
+								<artifactItem>
 									<groupId>org.vaadin</groupId>
 									<artifactId>icepush-gwt</artifactId>
 									<version>0.1.2</version>
-								</artifactItem>		
+								</artifactItem>
 								<artifactItem>
 									<groupId>org.vaadin.addons</groupId>
 									<artifactId>icepush</artifactId>
 									<version>0.2.0</version>
-								</artifactItem>	
+								</artifactItem>
 								<artifactItem>
 									<groupId>org.vaadin</groupId>
 									<artifactId>icepush-util</artifactId>
 									<version>0.1.2</version>
-								</artifactItem>	
+								</artifactItem>
 								<artifactItem>
-										<groupId>commons-codec</groupId>
-										<artifactId>commons-codec</artifactId>
-										<version>1.3</version>
-									</artifactItem>
-																		<artifactItem>
-										<groupId>org.lwjgl</groupId>
-										<artifactId>lwjgl</artifactId>
-										<version>2.1</version>
-									</artifactItem>
-									<artifactItem>
-										<groupId>org.vaadin.addons</groupId>
-										<artifactId>appletintegration</artifactId>
-										<version>1.1.4</version>
-									</artifactItem>		
-									<artifactItem>
-										<groupId>org.lwjgl</groupId>
-										<artifactId>lwjgl_util</artifactId>
-										<version>2.1</version>
-									</artifactItem>			
-									<artifactItem>
-										<groupId>org.lwjgl</groupId>
-										<artifactId>lwjgl_util_applet</artifactId>
-										<version>2.1</version>
-									</artifactItem>										
-									<artifactItem>
-										<groupId>com.jmonkeyengine</groupId>
-										<artifactId>jme</artifactId>
-										<version>2.0.1</version>
-									</artifactItem>		
-									<artifactItem>
-										<groupId>commons-codec</groupId>
-										<artifactId>commons-codec</artifactId>
-										<version>1.2</version>
-									</artifactItem>
-									<artifactItem>
-										<groupId>commons-httpclient</groupId>
-										<artifactId>commons-httpclient</artifactId>
-										<version>3.1</version>
-									</artifactItem>	
-									<artifactItem>
-										<groupId>commons-logging</groupId>
-										<artifactId>commons-logging</artifactId>
-										<version>1.1.1</version>
-									</artifactItem>
+									<groupId>commons-codec</groupId>
+									<artifactId>commons-codec</artifactId>
+									<version>1.3</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.lwjgl</groupId>
+									<artifactId>lwjgl</artifactId>
+									<version>2.1</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.vaadin.addons</groupId>
+									<artifactId>appletintegration</artifactId>
+									<version>1.1.4</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.lwjgl</groupId>
+									<artifactId>lwjgl_util</artifactId>
+									<version>2.1</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.lwjgl</groupId>
+									<artifactId>lwjgl_util_applet</artifactId>
+									<version>2.1</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>com.jmonkeyengine</groupId>
+									<artifactId>jme</artifactId>
+									<version>2.0.1</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>commons-codec</groupId>
+									<artifactId>commons-codec</artifactId>
+									<version>1.2</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>commons-httpclient</groupId>
+									<artifactId>commons-httpclient</artifactId>
+									<version>3.1</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>commons-logging</groupId>
+									<artifactId>commons-logging</artifactId>
+									<version>1.1.1</version>
+								</artifactItem>
 							</artifactItems>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
-			
+
 			<!-- Sign all the jars in the target directory -->
 			<plugin>
- 				<groupId>org.apache.maven.plugins</groupId>
- 				<artifactId>maven-jarsigner-plugin</artifactId>
- 				<version>1.2</version>
- 				<executions>
- 					<execution>
- 						<phase>prepare-package</phase>
- 						<goals>
-							 <goal>sign</goal>
-						 </goals>
- 						<configuration>
- 							<archiveDirectory>${project.build.directory}/${project.build.name}/VAADIN/widgetsets/org.wholebrainprojecttutorials.jmevaadinapplication.Widgetset</archiveDirectory>
- 							<keystore>.keystore</keystore>
- 							<storepass>m2m2m2</storepass>
- 							<keypass>m2m2m2</keypass>
- 							<alias>m2m2m2</alias>
- 						</configuration>
- 					</execution>
- 				</executions>
- 			</plugin> 
- 			
- 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jarsigner-plugin</artifactId>
+				<version>1.2</version>
+				<executions>
+					<execution>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+						<configuration>
+							<archiveDirectory>${project.build.directory}/${project.build.name}/VAADIN/widgetsets/org.wholebrainprojecttutorials.jmevaadinapplication.Widgetset</archiveDirectory>
+							<keystore>.keystore</keystore>
+							<storepass>m2m2m2</storepass>
+							<keypass>m2m2m2</keypass>
+							<alias>m2m2m2</alias>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
 				<groupId>com.googlecode.mavennatives</groupId>
 				<artifactId>maven-nativedependencies-plugin</artifactId>
 				<version>0.0.2</version>
@@ -198,12 +208,12 @@
 							<goal>copy</goal>
 						</goals>
 						<configuration>
-						
+
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
- 
+
 			<!-- Compiles your custom GWT components with the GWT compiler -->
 			<!--
 				A hosted mode browser for client-side widget debugging can be run
@@ -221,9 +231,9 @@
 						<phase>compile</phase>
 						<configuration>
 							<!-- if you don't specify any modules, the plugin will find them -->
-								<modules>
+							<modules>
 								<module>org.wholebrainprojecttutorials.jmevaadinapplication.Widgetset</module>
-								</modules>
+							</modules>
 							<webappDirectory>${project.build.directory}/${project.build.name}/VAADIN/widgetsets</webappDirectory>
 							<!-- On Mac running Snow Leopard, add "-d32" -->
 							<!--
@@ -241,8 +251,8 @@
 							<port>8080</port>
 						</configuration>
 						<goals>
-						<goal>resources</goal>
-						<goal>compile</goal>
+							<goal>resources</goal>
+							<goal>compile</goal>
 						</goals>
 					</execution>
 				</executions>
@@ -315,14 +325,14 @@
 		<dependency>
 			<groupId>org.wholebrainprojecttutorials</groupId>
 			<artifactId>jmeapplet</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<version>1.0</version>
 		</dependency>
 		<dependency>
-   			<groupId>org.vaadin.addons</groupId>
-   			<artifactId>appletintegration</artifactId>
-  		 <version>1.1.4</version>
-	</dependency>
-	<dependency>
+			<groupId>org.vaadin.addons</groupId>
+			<artifactId>appletintegration</artifactId>
+			<version>1.1.4</version>
+		</dependency>
+		<dependency>
 			<groupId>org.vaadin</groupId>
 			<artifactId>icepush-gwt</artifactId>
 			<version>0.1.2</version>
@@ -338,24 +348,24 @@
 			<version>0.1.2</version>
 		</dependency>
 	</dependencies>
-	
+
 	<repositories>
-                <repository>
-                        <id>openccdb-public</id>
-                        <url>http://openccdb.org:8081/nexus/content/groups/public</url>
-                </repository>
-                <repository>
-                        <id>openccdb-snapshot</id>
-                        <url>http://openccdb.org:8081/nexus/content/groups/public-snapshots</url>
-                </repository>
-                <repository>
-                        <id>openccdb-thirdparty</id>
-                        <url>http://openccdb.org:8081/nexus/content/repositories/thirdparty</url>
-                </repository>
-                <repository>
-   <id>vaadin-addons</id>
-   <url>http://maven.vaadin.com/vaadin-addons</url>
-</repository>
-        </repositories>
-        
+		<repository>
+			<id>openccdb-public</id>
+			<url>http://openccdb.org:8081/nexus/content/groups/public</url>
+		</repository>
+		<repository>
+			<id>openccdb-snapshot</id>
+			<url>http://openccdb.org:8081/nexus/content/groups/public-snapshots</url>
+		</repository>
+		<repository>
+			<id>openccdb-thirdparty</id>
+			<url>http://openccdb.org:8081/nexus/content/repositories/thirdparty</url>
+		</repository>
+		<repository>
+			<id>vaadin-addons</id>
+			<url>http://maven.vaadin.com/vaadin-addons</url>
+		</repository>
+	</repositories>
+
 </project>

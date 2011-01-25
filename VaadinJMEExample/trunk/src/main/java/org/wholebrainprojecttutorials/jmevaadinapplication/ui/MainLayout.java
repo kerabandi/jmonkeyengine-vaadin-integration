@@ -134,7 +134,7 @@ public class MainLayout extends VerticalLayout implements
 	    String APPLET_CLASS = "org.jmeappletintegration.example.SimpleJMEApplet";
 	    
 	    String[] APPLET_ARCHIVES = new String[] {
-	            "jmeapplet-1.0-SNAPSHOT.jar",
+	            "jmeapplet-1.0.jar",
 	            "commons-httpclient-3.1.jar", "commons-codec-1.3.jar",
 	            "commons-logging-1.1.1.jar" };
 	    
