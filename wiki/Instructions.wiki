@@ -27,7 +27,7 @@ Steps needed in order to run the provided example.
 
 Make sure you meet the requirements explained above.
 
-==Option 1. Running project using command prompt. ==
+==Running project using command prompt. ==
 
 1. Check-out the VaadinJMEAppletExample trunk to your workspace. 
 
