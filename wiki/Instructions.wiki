@@ -16,7 +16,9 @@ Requirements:
 
 4. Supported Web Browsers:
    Windows: Firefox, IE, Chrome, Opera
+   
    Mac: Safari 4, Firefox
+   
    Linux: Firefox
 
 Optional:
@@ -33,6 +35,7 @@ Make sure you meet the requirements explained above.
 Option 1. Running project using command prompt. 
 
 1. Check-out the VaadinJMEAppletExample trunk to your workspace. 
+
   
 2. Navigate from the command prompt to the parent folder holding the check-out project.
 Example: If you checked out your project to C://vaadinproject, navigate 
