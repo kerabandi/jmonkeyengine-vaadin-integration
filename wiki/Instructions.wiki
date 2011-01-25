@@ -8,8 +8,7 @@ Requirements:
 
 
 2. Maven 2.1 or above.
-   - you can check to see if you have this maven version installed in your machine by opening a command prompt and typing
-     "mvn -version".  
+   - you can check to see if you have this maven version installed in your machine by opening a command prompt and typing "mvn -version".  
 
 3. 150 MBspace in hard drive. 
 
