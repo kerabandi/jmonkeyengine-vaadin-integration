@@ -4,24 +4,21 @@
 
 ==Requirements:==
 
-1. Java JDK 1.5 or above, I recommend installing the latest JDK available. 
+# Java JDK 1.5 or above, I recommend installing the latest JDK available. 
 
-
-2. Maven 2.1 or above.
+# Maven 2.1 or above.
    - you can check to see if you have this maven version installed in your machine by opening a command prompt and typing "mvn -version".  
 
-3. 150 MBspace in hard drive. 
+# 150 MBspace in hard drive. 
 
-4. Supported Web Browsers:
+# Supported Web Browsers:
    Windows: Firefox, IE, Chrome, Opera
    
    Mac: Safari 4, Firefox
    
    Linux: Firefox
 
-Optional:
-
-5. Text editor, if you are planning on making any changes to the 
+# (Optional) Text editor, if you are planning on making any changes to the 
 example I provided. I use Eclipse to edit my text files.
 
 = Steps =
