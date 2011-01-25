@@ -20,6 +20,7 @@ Requirements:
    Linux: Firefox
 
 Optional:
+
 5. Text editor, if you are planning on making any changes to the 
 example I provided. I use Eclipse to edit my text files.
 
