@@ -2,7 +2,7 @@
 
 = Requirements=
 
-Requirements:
+==Requirements:==
 
 1. Java JDK 1.5 or above, I recommend installing the latest JDK available. 
 
@@ -30,12 +30,12 @@ Steps needed in order to run the provided example.
 
 Make sure you meet the requirements explained above.
 
-Option 1. Running project using command prompt. 
+==Option 1. Running project using command prompt. ==
 
 1. Check-out the VaadinJMEAppletExample trunk to your workspace. 
 
   
-2. Navigate from the command prompt to the parent folder holding the check-out project.
+*2*. Navigate from the command prompt to the parent folder holding the check-out project.
 Example: If you checked out your project to C://vaadinproject, navigate 
 to folder named "vaadinproject". 
 
