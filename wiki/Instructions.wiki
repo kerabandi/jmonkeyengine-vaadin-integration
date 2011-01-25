@@ -1,10 +1,6 @@
 #summary One-sentence summary of this page.
 
-= Introduction =
-
-Running the examples from scratch.
-
-= Details =
+= Requirements=
 
 Requirements:
 1. Java JDK 1.5 or above, I recommend installing the latest JDK available. 
@@ -24,6 +20,8 @@ Requirements:
 Optional:
 5. Text editor, if you are planning on making any changes to the 
 example I provided. I use Eclipse to edit my text files.
+
+= Steps =
 
 Steps needed in order to run the provided example.
 
