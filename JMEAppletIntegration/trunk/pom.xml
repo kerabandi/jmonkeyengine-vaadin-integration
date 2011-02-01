@@ -1,9 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.wholebrainprojecttutorials</groupId>
 	<artifactId>jmeapplet</artifactId>
 	<name>JMEVaadinApplet</name>
-	<version>1.0-SNAPSHOT</version>
+	<version>1.0</version>
 	<description>jMonkeyEngine Applet for Vaadin</description>
 	<licenses>
 		<license>
@@ -18,23 +19,11 @@
 			<id>jrmartin</id>
 			<name>Jesus R Martinez</name>
 			<email>jrmartin@ncmir.ucsd.edu</email>
-			<organization>Whole Brain Project</organization>
-			<organizationUrl>www.wholebrainproject.org</organizationUrl>
-			<roles>
-				<role>architect</role>
-				<role>developer</role>
-			</roles>
-		  </developer>
-		  <developer>
+		</developer>
+		<developer>
 			<id>slarson</id>
 			<name>Stephen Larson</name>
 			<email>slarson@ncmir.ucsd.edu</email>
-			<organization>Whole Brain Project</organization>
-			<organizationUrl>www.wholebrainproject.org</organizationUrl>
-			<roles>
-				<role>architect</role>
-				<role>developer</role>
-			</roles>
 		</developer>
 	</developers>
 	<scm>
@@ -43,17 +32,15 @@
 		<url>http://code.google.com/p/wholebrain/source/browse/#svn/JmeVaadinApplet/trunk</url>
 	</scm>
 	<build>
-		<sourceDirectory> src </sourceDirectory>
-
- <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>gwt-maven-plugin</artifactId>
-          <version>1.1</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>gwt-maven-plugin</artifactId>
+					<version>1.1</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 		<!--
 			Just defines how you want compilation of java classes to happen
 		-->
@@ -105,10 +92,16 @@
 			</plugin>
 
 
-	        <!-- run with: mvn release:prepare , and then : mvn release:perform -->
-	 		<!-- pre reqs: 'mvn' and 'svn' must both work on the command line -->
-			<!-- recommended that you do not use the embedded eclipse version of maven -->
-			<!-- instead, install the latest version on your system and run the external version -->
+			<!-- run with: mvn release:prepare , and then : mvn release:perform -->
+			<!-- pre reqs: 'mvn' and 'svn' must both work on the command line -->
+			<!--
+				recommended that you do not use the embedded eclipse version of
+				maven
+			-->
+			<!--
+				instead, install the latest version on your system and run the
+				external version
+			-->
 			<!-- should set JAVA_HOME to point to java and "MAVEN_OPTS=-Xmx768m" -->
 			<plugin>
 				<artifactId>maven-release-plugin</artifactId>
@@ -117,18 +110,19 @@
 					<tagBase>
 						https://wholebrain.googlecode.com/svn/JmeVaadinApplet/tags
 					</tagBase>
-					<!-- triggers the profile below called 'release', which
-                         causes release:perform to send the released versions
-                         of the jars to the maven repository, rather than to
-                         the Google code SVN repository (where the tag goes)
-                    -->
-	 				<releaseProfiles>release</releaseProfiles>
-	 				<!-- solves problem of not having jars installed -->
-	 				<!-- see http://tinyurl.com/7dfbx2 for more -->
-	 				<preparationGoals>clean verify install</preparationGoals>
-                    <!-- uncomment below when ready to deploy the site regularly -->
-                    <!-- <goals>package deploy site-deploy</goals> -->
-                    <goals>deploy</goals>
+					<!--
+						triggers the profile below called 'release', which causes
+						release:perform to send the released versions of the jars to the
+						maven repository, rather than to the Google code SVN repository
+						(where the tag goes)
+					-->
+					<releaseProfiles>release</releaseProfiles>
+					<!-- solves problem of not having jars installed -->
+					<!-- see http://tinyurl.com/7dfbx2 for more -->
+					<preparationGoals>clean verify install</preparationGoals>
+					<!-- uncomment below when ready to deploy the site regularly -->
+					<!-- <goals>package deploy site-deploy</goals> -->
+					<goals>deploy</goals>
 				</configuration>
 			</plugin>
 
@@ -142,8 +136,8 @@
 				<directory>src/main/java</directory>
 			</resource>
 			<resource>
-				 <directory>src/main/resources</directory>
-		    </resource>
+				<directory>src/main/resources</directory>
+			</resource>
 		</resources>
 	</build>
 	<dependencies>
@@ -154,31 +148,31 @@
 			<version>2.0.1</version>
 		</dependency>
 		<dependency>
-   			<groupId>org.vaadin.addons</groupId>
-   			<artifactId>appletintegration</artifactId>
-  		 <version>1.1.4</version>
-	</dependency>
+			<groupId>org.vaadin.addons</groupId>
+			<artifactId>appletintegration</artifactId>
+			<version>1.1.4</version>
+		</dependency>
 	</dependencies>
 
-<repositories>
-                <repository>
-                        <id>openccdb-public</id>
-                        <url>http://openccdb.org:8081/nexus/content/groups/public</url>
-                </repository>
-                <repository>
-                        <id>openccdb-snapshot</id>
-                        <url>http://openccdb.org:8081/nexus/content/groups/public-snapshots</url>
-                </repository>
-                <repository>
-                        <id>openccdb-thirdparty</id>
-                        <url>http://openccdb.org:8081/nexus/content/repositories/thirdparty</url>
-                </repository>
-                <repository>
-   <id>vaadin-addons</id>
-   <url>http://maven.vaadin.com/vaadin-addons</url>
-</repository>
-        </repositories>
-        
+	<repositories>
+		<repository>
+			<id>openccdb-public</id>
+			<url>http://openccdb.org:8081/nexus/content/groups/public</url>
+		</repository>
+		<repository>
+			<id>openccdb-snapshot</id>
+			<url>http://openccdb.org:8081/nexus/content/groups/public-snapshots</url>
+		</repository>
+		<repository>
+			<id>openccdb-thirdparty</id>
+			<url>http://openccdb.org:8081/nexus/content/repositories/thirdparty</url>
+		</repository>
+		<repository>
+			<id>vaadin-addons</id>
+			<url>http://maven.vaadin.com/vaadin-addons</url>
+		</repository>
+	</repositories>
+
 	<distributionManagement>
 		<repository>
 			<id>releases</id>
