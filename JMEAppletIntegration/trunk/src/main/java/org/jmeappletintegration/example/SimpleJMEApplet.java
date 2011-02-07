@@ -1,39 +1,24 @@
-/*
- * Copyright (c) 2003-2009 
- * All rights reserved.
+/**
+ * Copyright (C) 2010 
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are
- * met:
+ * JMonkeyEngine-Vaadin-Integration project is Licensed under the GNU Lesser Public License (LGPL),
+ * Version 2.0 (the "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the license at
  *
- * * Redistributions of source code must retain the above copyright
- *   notice, this list of conditions and the following disclaimer.
+ * http://www.gnu.org/licenses/lgpl.txt
  *
- * * Redistributions in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in the
- *   documentation and/or other materials provided with the distribution.
- *
- * * Neither the name of 'jMonkeyEngine' nor the names of its contributors 
- *   may be used to endorse or promote products derived from this software 
- *   without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
- * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
- * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License
  */
 
 package org.jmeappletintegration.example;
 
 import java.awt.BorderLayout;
 import java.awt.Canvas;
+import java.awt.dnd.DropTarget;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.FocusEvent;
@@ -43,6 +28,13 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelListener;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -68,14 +60,19 @@ import com.jme.math.Vector3f;
 import com.jme.renderer.Camera;
 import com.jme.renderer.ColorRGBA;
 import com.jme.renderer.Renderer;
+import com.jme.scene.Geometry;
 import com.jme.scene.Node;
 import com.jme.scene.Spatial;
 import com.jme.scene.Text;
 import com.jme.scene.TriMesh;
+import com.jme.scene.VBOInfo;
+import com.jme.scene.Spatial.CullHint;
 import com.jme.scene.shape.Box;
 import com.jme.scene.shape.Cone;
 import com.jme.scene.shape.Quad;
 import com.jme.scene.shape.Sphere;
+import com.jme.scene.state.BlendState;
+import com.jme.scene.state.GLSLShaderObjectsState;
 import com.jme.scene.state.LightState;
 import com.jme.scene.state.TextureState;
 import com.jme.scene.state.WireframeState;
@@ -86,6 +83,7 @@ import com.jme.util.Debug;
 import com.jme.util.GameTaskQueue;
 import com.jme.util.GameTaskQueueManager;
 import com.jme.util.TextureManager;
+import com.jme.util.export.binary.BinaryImporter;
 import com.jme.util.geom.Debugger;
 import com.jme.util.stat.StatCollector;
 import com.jme.util.stat.StatType;
@@ -95,7 +93,8 @@ import com.jme.util.stat.graph.TabledLabelGrapher;
 import com.jmex.awt.input.AWTKeyInput;
 import com.jmex.awt.input.AWTMouseInput;
 import com.jmex.awt.lwjgl.LWJGLAWTCanvasConstructor;
-import com.jmex.model.collada.schema.boxType;
+import com.jmex.model.converters.FormatConverter;
+import com.jmex.model.converters.ObjToJme;
 
 /**
  * Class in charge of creating JME Applet. Uses AbstractVaadinApplet class from
@@ -151,16 +150,24 @@ public class SimpleJMEApplet extends AbstractVaadinApplet {
     private float angle = 0;
     private Vector3f axis;
     
-
+    private String[] textures = {"/Monkey.png", "/wbclogo.png", "/penguin.png",
+    		                     "/vaadin.png", "/java.jpg"};
+    
     private String BOX = "Box";
     private String SPHERE = "Sphere";
     private String CONE = "Cone";
+
+    boolean rotateAll = false;
     
     private String currentShape = BOX;
 
     Vector3f max = new Vector3f(5, 5, 5);
     Vector3f min = new Vector3f(-5, -5, -5);
+
+	private DropTarget dropTarget;
     
+	private AppletDropTarget appletTarget;
+	
     @Override
     public void init() {
 
@@ -179,11 +186,6 @@ public class SimpleJMEApplet extends AbstractVaadinApplet {
     	super.init();
     	
         synchronized (INIT_LOCK) {
-        	
-        	for(int i =0; i<100; i++){
-        		System.out.println("new test");
-        	}
-        	
             TextureManager.clearCache();
             Text.resetFontTexture();
 
@@ -280,10 +282,19 @@ public class SimpleJMEApplet extends AbstractVaadinApplet {
                         glCanvas.requestFocus();
                 };
             });
+            
+            dropTarget = new DropTarget(this, getAppletTarget());
         }
     }
     
 
+    public AppletDropTarget getAppletTarget(){
+    	if(appletTarget == null){
+    		appletTarget = new AppletDropTarget(this);
+    	}
+    	
+    	return appletTarget;
+    }
     /**
      * Override this function from class AbstractVaadinApplet. This method is the one
      * receiving commands from the vaadin code. 
@@ -294,8 +305,9 @@ public class SimpleJMEApplet extends AbstractVaadinApplet {
      */
 	@Override
 	protected void doExecute(String command, Object[] params) {
-		if(command.equals("changeColor")){
-			impl.changeShapeColor();
+		
+		if(command.equals("changeTexture")){
+			impl.changeShapeTexture();
 		}
 		
 		else if(command.equals("changeShape")){
@@ -303,8 +315,72 @@ public class SimpleJMEApplet extends AbstractVaadinApplet {
 			
 			impl.changeShape(shape);
 		}
+		
+		//vaadin application told applet to add new object
+		else if(command.equals("add_obj")){
+			//parse the parameters sent by vaadin
+			String data = params[0].toString();
+			String name = params[1].toString();
+			
+			String home = System.getProperty("user.home");
+			
+			//copy .obj data into user home folder
+			File f = new File(home + "/" + name);
+
+			try{
+				
+				f.createNewFile();
+				
+				FileOutputStream fop=new FileOutputStream(f);
+
+				if(f.exists()){
+					fop.write(data.getBytes());
+
+					fop.flush();
+					fop.close();
+				}
+
+			}
+			catch(Exception e){
+				
+			}
+
+			addFileTo3D(f);
+		}
 	}
 
+	/**
+	 * Take a Java io File and add it to the root node
+	 * @param f
+	 */
+	public void addFileTo3D(File f){
+		
+        try {
+        	
+        	//URL of File
+            URL objFile= f.toURL();
+            
+			FormatConverter converter = new ObjToJme();
+
+            ByteArrayOutputStream BO=new ByteArrayOutputStream();
+            
+			// This will read the .jme format and convert it into a scene graph
+			BinaryImporter jbr = new BinaryImporter();
+			
+			//convert file obj to jme object
+            converter.convert(objFile.openStream(),BO);
+                        
+            //cast jme object to spatial
+            Spatial r=(Spatial) jbr.load(new ByteArrayInputStream(BO.toByteArray()));
+                                    
+            //add spatial to root
+            impl.addOBJ(r);            
+            
+        } catch (IOException e) {
+            logger.logp(Level.SEVERE, this.getClass().toString(),
+                    "simpleInitGame()", "Exception", e);
+        }
+	}
 	 
 	/**
 	 * Extract the tray.dll or libtray.so (depending on the Operating System) 
@@ -578,12 +654,10 @@ public class SimpleJMEApplet extends AbstractVaadinApplet {
 
                 // Finally, a stand alone node (not attached to root on purpose)
                 statNode = new Node("stat node");
-                statNode.setCullHint(Spatial.CullHint.Never);
+                statNode.setCullHint(Spatial.CullHint.Dynamic);
 
-                if (Debug.stats) {
-                    setupStatGraphs();
-                    setupStats();
-                }
+                setupStatGraphs();
+                setupStats();
 
                 statNode.updateGeometricState(0, true);
                 statNode.updateRenderState();
@@ -625,23 +699,11 @@ public class SimpleJMEApplet extends AbstractVaadinApplet {
         private void simpleAppletSetup() {
 
             try {       
-             	 getLightState().setEnabled(false);
-
                 rotQuat = new Quaternion();
                 axis = new Vector3f(1, 1, 0.5f).normalizeLocal();
                       
                 createBox();
-                
-                getRootNode().attachChild(box);
-                
-                TextureState ts = getRenderer().createTextureState();
-                ts.setEnabled(true);
-                ts.setTexture(TextureManager.loadTexture(
-                        SimpleJMEApplet.class.getResource(
-                                "/Monkey.png"), Texture.MinificationFilter.Trilinear,
-                        Texture.MagnificationFilter.Bilinear));
-         
-                getRootNode().setRenderState(ts);
+
             } catch (Exception e) {
                 // Had issues setting up. We'll catch it and go on so it
                 // doesn't
@@ -651,23 +713,119 @@ public class SimpleJMEApplet extends AbstractVaadinApplet {
             }			
 		}
 
+        private void applyRenderState(TriMesh mesh, String image) {
+            TextureState ts = getRenderer().createTextureState();
+            ts.setEnabled(true);
+            ts.setTexture(TextureManager.loadTexture(
+                    SimpleJMEApplet.class.getResource(
+                            image), Texture.MinificationFilter.Trilinear,
+                    Texture.MagnificationFilter.Bilinear));
+     
+            //Apply Render State to Box 
+            mesh.setRenderState(ts);	
+            
+            mesh.updateRenderState();            
+		}
+
+		/**
+         * Makes the target node have an XRay (aka Ghost) effect to it
+         * @param target
+         * @return True if the apply was successful, False is unsuccessful
+         */
+        public boolean applyEffectGhost(Spatial target)
+        {
+            try
+            {		        
+                GLSLShaderObjectsState xray = DisplaySystem.getDisplaySystem()
+					.getRenderer().createGLSLShaderObjectsState();
+                                    
+                //URL frag = target.getClass().getResource("xray.frag");
+                
+                //We are using the base of the application to find the shaders, which means 
+                //they should be located at the same place as the wbc-properties files
+                URL frag = SimpleJMEApplet.class.getResource("/xray.frag");
+                URL vert = SimpleJMEApplet.class.getResource("/xray.vert");
+                
+                xray.load(vert,  frag);  
+                xray.setEnabled(true);
+                xray.setUniform("edgefalloff", 1f);
+
+                target.setRenderState(xray);
+                target.updateRenderState();             
+            }
+	        catch (Exception e) 
+	        {
+	        		e.printStackTrace();
+	        		return false;
+	        }
+	                
+	        return true;
+        }
+        
+        /**
+         * Takes a Spatial and adds it to the Root Node of the application
+         * @param obj
+         */
+        public void addOBJ(Spatial obj){   
+        	
+        	//give the spatial a random color
+    		((Geometry) obj).setSolidColor(ColorRGBA.randomColor());
+    		
+    		obj.setModelBound(new BoundingBox());
+    		VBOInfo nfo = new VBOInfo(true);
+    		((Geometry) obj).setVBOInfo(nfo);
+    		
+    		//apply ghost effect to spatial
+        	this.applyEffectGhost(obj);
+            
+        	//Computer point right in front of camera
+        	Vector3f location = this.getCamera().getLocation();
+    		Vector3f toward = getCamera().getDirection().mult(40f);
+    		Vector3f combined = location.add(toward);
+    		
+        	obj.setLocalTranslation(combined);
+        	
+        	//attach spatial to root node
+        	getRootNode().attachChild(obj);        	
+        	
+        	//update model bound and render state
+    		getRootNode().updateModelBound();
+    		getRootNode().updateRenderState();
+        }
+        
 		public void simpleRender() {
             statNode.draw(renderer);
             doDebug();
         }
 
+		/**
+		 * Create a JME Box
+		 */
         public void createBox(){
             box = new Box("Box", min, max);
             box.setLocalTranslation(new Vector3f(0, 0, -15));
             box.setModelBound(new BoundingBox());
             box.updateModelBound();
+            
+            
+            applyRenderState((TriMesh)box, "/Monkey.png");
+            
+            getRootNode().attachChild(box);
         }
         
+        /**
+         * Create a JME Sphere
+         */
         public void createSphere(){
             sphere = new Sphere("Sphere",63, 50, 8);
+                     
             sphere.setLocalTranslation(new Vector3f(0, 0, -15));
             sphere.setModelBound(new BoundingBox());
             sphere.updateModelBound();
+            
+            applyRenderState((TriMesh)sphere,"/Monkey.png");
+            
+            getRootNode().attachChild(sphere);
         }
         
         public void createCone(){
@@ -677,27 +835,37 @@ public class SimpleJMEApplet extends AbstractVaadinApplet {
         	float radius = 8;
         	float height = 15;
         	cone = new Cone("Cone", axisSamples, radialSamples, radius, height);
-
+        	        	
             cone.setModelBound(new BoundingBox());
             cone.updateModelBound();
-            cone.setLocalTranslation(new Vector3f(0, 0, -15));
+            cone.setLocalTranslation(new Vector3f(0, 0, -15));   
+
+        	applyRenderState((TriMesh)cone, "/Monkey.png");
+        	
+        	getRootNode().attachChild(cone);
         }
         	
         /**
          * Changes the color of the current shape being rendered in the applet
          */
-        public void changeShapeColor(){
-        	if(currentShape.equals(BOX)){
-        		box.setDefaultColor(ColorRGBA.randomColor());
+        public void changeShapeTexture(){
+        	
+            Random generator = new Random();
+            int index = generator.nextInt(5);
+            
+            if(currentShape.equals(BOX)){
+            	applyRenderState((TriMesh)box, textures[index]);
         	}
 
         	else if(currentShape.equals(CONE)){
-        		cone.setDefaultColor(ColorRGBA.randomColor());
+            	applyRenderState((TriMesh)cone, textures[index]);
         	}
         	
         	else if(currentShape.equals(SPHERE)){
-        		sphere.setDefaultColor(ColorRGBA.randomColor());
+            	applyRenderState((TriMesh)sphere, textures[index]);
         	}
+        	
+        	getRootNode().updateRenderState();
         }
         
         /**
@@ -705,13 +873,19 @@ public class SimpleJMEApplet extends AbstractVaadinApplet {
          * 
          * @param shape
          */
-        public void changeShape(String shape){
-        	        	
-        	getRootNode().detachAllChildren();
+        public void changeShape(String shape){       
         	
+        	Vector3f location = this.getCamera().getLocation();
+    		Vector3f toward = getCamera().getDirection().mult(40f);
+    		Vector3f combined = location.add(toward);
+    		
         	if(shape.equals(BOX)){
-                getRootNode().attachChild(box);
+                box.setCullHint(CullHint.Dynamic);
+                box.setLocalTranslation(combined);
+                
                 currentShape = BOX;
+                
+                hideOtherShapes(currentShape);
         	}
         	
         	else if(shape.equals(CONE)){
@@ -719,9 +893,12 @@ public class SimpleJMEApplet extends AbstractVaadinApplet {
         			createCone();
         		}
         		
-                getRootNode().attachChild(cone);
-                
+        		cone.setCullHint(CullHint.Dynamic);
+        		cone.setLocalTranslation(combined);
+        		
                 currentShape = CONE;
+                hideOtherShapes(currentShape);
+
         	}
         	
         	else if(shape.equals(SPHERE)){
@@ -729,21 +906,48 @@ public class SimpleJMEApplet extends AbstractVaadinApplet {
         			createSphere();
         		}
         		
-                getRootNode().attachChild(sphere);
-                
+        		sphere.setCullHint(CullHint.Dynamic);
+        		sphere.setLocalTranslation(combined);
+        		                
                 currentShape = SPHERE;
-        	}
+                
+                hideOtherShapes(currentShape);                
+        	}        	
         	
-        	TextureState ts = getRenderer().createTextureState();
-            ts.setEnabled(true);
-            ts.setTexture(TextureManager.loadTexture(
-                    SimpleJMEApplet.class.getResource(
-                            "/Monkey.png"), Texture.MinificationFilter.Trilinear,
-                    Texture.MagnificationFilter.Bilinear));
-     
-            getRootNode().setRenderState(ts);
+        	getRootNode().updateRenderState();
         }
         
+        private void hideOtherShapes(String currentShape){
+        	if(currentShape.equals(BOX)){
+        		if(sphere!=null){
+        			sphere.setCullHint(CullHint.Always);
+        		}
+        		
+        		if(cone!=null){
+        			cone.setCullHint(CullHint.Always);
+        		}
+        	}
+        	
+        	if(currentShape.equals(SPHERE)){
+        		if(box!=null){
+        			box.setCullHint(CullHint.Always);
+        		}
+        		
+        		if(cone!=null){
+        			cone.setCullHint(CullHint.Always);
+        		}
+        	}
+        	
+        	if(currentShape.equals(CONE)){
+        		if(box!=null){
+        			box.setCullHint(CullHint.Always);
+        		}
+        		
+        		if(sphere!=null){
+        			sphere.setCullHint(CullHint.Always);
+        		}
+        	}
+        }
         protected void doDebug() {
             /**
              * If showing bounds, draw rootNode's bounds, and the bounds of all its
