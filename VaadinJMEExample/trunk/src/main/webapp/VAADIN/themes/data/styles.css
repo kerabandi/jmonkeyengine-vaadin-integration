@@ -18,3 +18,12 @@
       font-family: "Lucida Grande", Helvetica, Arial, sans-serif;
       color: #222;
 }
+
+.v-html5dropzone {
+        border: 2px solid gray;
+        background: WhiteSmoke;
+}
+.v-html5dropzone-active {
+        background: aqua;
+        border: 2px solid blue;
+}

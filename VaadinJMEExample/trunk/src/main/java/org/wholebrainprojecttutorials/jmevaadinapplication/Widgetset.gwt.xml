@@ -9,7 +9,8 @@
 
     <!-- Applet Widget -->
     <inherits name="org.vaadin.applet.AppletintegrationWidgetset" />
-               
+        
+            <!-- Applet Widget -->
     <!--
         Uncomment the following to compile the widgetset for one browser only.
         This can reduce the GWT compilation time significantly when debugging.
@@ -24,4 +25,5 @@
         Firefox 2 and safari is used for  webkit based browsers including
         Google Chrome.
     -->  
+        
  </module>

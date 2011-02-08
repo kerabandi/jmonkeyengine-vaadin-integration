@@ -39,7 +39,8 @@ public class HeadBar extends VerticalLayout{
         hlayout.setExpandRatio(link, 1);
         hlayout.setComponentAlignment(link, Alignment.MIDDLE_LEFT);
         
-		Label mydatalabel = new Label("Vaadin JME Applet Integration");
+		Label mydatalabel = new Label("Vaadin JME Applet Integration " +
+								" with Drag and Drop Upload Tool");
 		mydatalabel.setStyleName("mystyle");
 		
 		hlayout.addComponent(mydatalabel);	
