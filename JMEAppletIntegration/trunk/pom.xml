@@ -4,7 +4,7 @@
 	<groupId>org.wholebrainprojecttutorials</groupId>
 	<artifactId>jmeapplet</artifactId>
 	<name>JMEVaadinApplet</name>
-	<version>1.0</version>
+	<version>1.0.1</version>
 	<description>jMonkeyEngine Applet for Vaadin</description>
 	<licenses>
 		<license>

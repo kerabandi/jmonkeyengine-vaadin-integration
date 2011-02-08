@@ -18,6 +18,7 @@ package org.jmeappletintegration.example;
 
 import java.awt.BorderLayout;
 import java.awt.Canvas;
+import java.awt.Font;
 import java.awt.dnd.DropTarget;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -33,6 +34,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Random;
 import java.util.concurrent.Callable;
@@ -76,6 +78,7 @@ import com.jme.scene.state.GLSLShaderObjectsState;
 import com.jme.scene.state.LightState;
 import com.jme.scene.state.TextureState;
 import com.jme.scene.state.WireframeState;
+import com.jme.scene.state.ZBufferState;
 import com.jme.system.DisplaySystem;
 import com.jme.system.canvas.JMECanvas;
 import com.jme.system.canvas.SimpleCanvasImpl;
@@ -93,6 +96,8 @@ import com.jme.util.stat.graph.TabledLabelGrapher;
 import com.jmex.awt.input.AWTKeyInput;
 import com.jmex.awt.input.AWTMouseInput;
 import com.jmex.awt.lwjgl.LWJGLAWTCanvasConstructor;
+import com.jmex.font2d.Font2D;
+import com.jmex.font2d.Text2D;
 import com.jmex.model.converters.FormatConverter;
 import com.jmex.model.converters.ObjToJme;
 
@@ -144,11 +149,6 @@ public class SimpleJMEApplet extends AbstractVaadinApplet {
      * Number of samples to use for the multisample buffer. Must be set in the constructor.
      */
     protected int samples = 0;
-
-    private TriMesh box, sphere, cone;
-    private Quaternion rotQuat;
-    private float angle = 0;
-    private Vector3f axis;
     
     private String[] textures = {"/Monkey.png", "/wbclogo.png", "/penguin.png",
     		                     "/vaadin.png", "/java.jpg"};
@@ -161,10 +161,7 @@ public class SimpleJMEApplet extends AbstractVaadinApplet {
     
     private String currentShape = BOX;
 
-    Vector3f max = new Vector3f(5, 5, 5);
-    Vector3f min = new Vector3f(-5, -5, -5);
-
-	private DropTarget dropTarget;
+	private DropTarget dropTarget = null;
     
 	private AppletDropTarget appletTarget;
 	
@@ -242,7 +239,6 @@ public class SimpleJMEApplet extends AbstractVaadinApplet {
                 }
             });
 
-            glCanvas.setFocusable(true);
             glCanvas.addFocusListener(new FocusListener() {
 
                 public void focusGained(FocusEvent arg0) {
@@ -350,15 +346,19 @@ public class SimpleJMEApplet extends AbstractVaadinApplet {
 	}
 
 	/**
-	 * Take a Java io File and add it to the root node
+	 * Take a Java io File and convert it to JME OBject
 	 * @param f
 	 */
 	public void addFileTo3D(File f){
 		
         try {
         	
+        	impl.setLoading(true, f.getName());
+            
         	//URL of File
             URL objFile= f.toURL();
+                        
+            InputStream stream = objFile.openStream();
             
 			FormatConverter converter = new ObjToJme();
 
@@ -366,15 +366,17 @@ public class SimpleJMEApplet extends AbstractVaadinApplet {
             
 			// This will read the .jme format and convert it into a scene graph
 			BinaryImporter jbr = new BinaryImporter();
+					
 			
 			//convert file obj to jme object
-            converter.convert(objFile.openStream(),BO);
-                        
+            converter.convert(stream,BO);
+                                                
             //cast jme object to spatial
             Spatial r=(Spatial) jbr.load(new ByteArrayInputStream(BO.toByteArray()));
-                                    
-            //add spatial to root
+                                                //add spatial to root
             impl.addOBJ(r);            
+            
+            impl.setLoading(false, f.getName());
             
         } catch (IOException e) {
             logger.logp(Level.SEVERE, this.getClass().toString(),
@@ -470,6 +472,10 @@ public class SimpleJMEApplet extends AbstractVaadinApplet {
     public void setInputHandler(InputHandler input) {
         impl.setInputHandler(input);
     }
+    
+    public SimpleAppletCanvasImplementor getImpl(){
+    	return impl;
+    }
 
     class SimpleAppletCanvasImplementor extends SimpleCanvasImpl {
 
@@ -509,6 +515,17 @@ public class SimpleJMEApplet extends AbstractVaadinApplet {
 
         private TabledLabelGrapher tgrapher;
         private Quad labGraph;
+        private TriMesh box, sphere, cone;
+        private Quaternion rotQuat;
+        private float angle = 0;
+        private Vector3f axis;
+        
+        Vector3f max = new Vector3f(5, 5, 5);
+        Vector3f min = new Vector3f(-5, -5, -5);
+        
+        private Text2D loadField;
+
+		private Node HUD;
         
         protected SimpleAppletCanvasImplementor(int width, int height) {
             super(width, height);
@@ -704,6 +721,30 @@ public class SimpleJMEApplet extends AbstractVaadinApplet {
                       
                 createBox();
 
+                HUD = new Node("HUD");
+                
+        		HUD.setLightCombineMode(Spatial.LightCombineMode.Off);
+
+        		getRootNode().attachChild(HUD);
+
+        		Font2D dfont = new Font2D();
+        		ZBufferState zbs = DisplaySystem.getDisplaySystem().getRenderer()
+        				.createZBufferState();
+        		zbs.setFunction(ZBufferState.TestFunction.Always);
+        		
+        		loadField = dfont.createText("Loading...\n (Please Wait)", 14,
+        				Font.BOLD); // make smaller by scale
+        		loadField.setLocalTranslation(new Vector3f(DisplaySystem.getDisplaySystem().getWidth() / 3,
+        				DisplaySystem.getDisplaySystem().getHeight() / 2, 3));
+        		System.out.println("local trans " + loadField.getLocalTranslation());
+        		loadField.setLocalScale(.9f * 1.5f);
+        		loadField.setRenderQueueMode(Renderer.QUEUE_ORTHO);
+        		loadField.setRenderState(zbs);
+        		loadField.setTextColor(new ColorRGBA(1, 1, 1f, 1));
+        		loadField.setCullHint(CullHint.Always); // hide by default
+        		
+        		HUD.attachChild(loadField);        		
+        		
             } catch (Exception e) {
                 // Had issues setting up. We'll catch it and go on so it
                 // doesn't
@@ -712,6 +753,21 @@ public class SimpleJMEApplet extends AbstractVaadinApplet {
                         "simpleSetup()", "Exception", e);
             }			
 		}
+        
+        public void setLoading(boolean mode, String name){
+        	if(mode){
+        		System.out.println("adding load field to hud ");
+        		loadField.setCullHint(CullHint.Never);
+        		loadField.setText("Loading " + name + " please Wait");
+        		loadField.updateRenderState();
+        		HUD.updateRenderState();
+        	}
+        	
+        	else{
+        		System.out.println("hide loadfiled");
+        		loadField.setCullHint(CullHint.Always);
+        	}
+        }
 
         private void applyRenderState(TriMesh mesh, String image) {
             TextureState ts = getRenderer().createTextureState();

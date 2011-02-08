@@ -22,9 +22,18 @@ import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.jme.scene.Spatial;
+import com.jme.util.export.binary.BinaryImporter;
+import com.jmex.model.converters.FormatConverter;
+import com.jmex.model.converters.ObjToJme;
 
 /**
  * Listener Class to detect user dropping a file in the applet. 
@@ -77,7 +86,8 @@ public class AppletDropTarget implements DropTargetListener{
 		          
 		             File f = new File(list.get(j).toString());		
 		             
-		 			 applet.addFileTo3D(f);
+		             ThreadLoad load = new ThreadLoad(f,applet);
+		             load.start();
 		          }
 		        }
 		      }
@@ -90,9 +100,34 @@ public class AppletDropTarget implements DropTargetListener{
 	}
 
 	public void dropActionChanged(DropTargetDragEvent dtde) {
-		// TODO Auto-generated method stub
 		System.out.println("Drop Action");
 	}
 
 	
+}
+
+/**
+ * Java File to JME object conversion done inside own thread
+ * @author jrmartin
+ *
+ */
+class ThreadLoad extends Thread{
+	
+	private File f;
+	private SimpleJMEApplet applet;
+
+	public ThreadLoad(File f, SimpleJMEApplet applet){
+		this.f = f;
+		this.applet = applet;
+	}
+	
+	public void run(){
+		try{
+			applet.addFileTo3D(f);
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+
+	}
 }
