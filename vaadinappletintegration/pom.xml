@@ -1,0 +1,228 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.vaadin</groupId>
+	<version>1.1.4.2-SNAPSHOT</version>
+	<artifactId>vaadinappletintegration</artifactId>
+	<licenses>
+		<license>
+			<name>LGPL</name>
+			<url>http://www.opensource.org/licenses/lgpl-2.1.php
+			</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<developers>
+		<developer>
+			<id>jrmartin</id>
+			<name>Jesus R Martinez</name>
+			<email>jrmartin@ncmir.ucsd.edu</email>
+			<organization>Whole Brain Project</organization>
+			<organizationUrl>www.wholebrainproject.org</organizationUrl>
+			<roles>
+				<role>architect</role>
+				<role>developer</role>
+			</roles>
+		  </developer>
+		  <developer>
+			<id>slarson</id>
+			<name>Stephen Larson</name>
+			<email>slarson@ncmir.ucsd.edu</email>
+			<organization>Whole Brain Project</organization>
+			<organizationUrl>www.wholebrainproject.org</organizationUrl>
+			<roles>
+				<role>architect</role>
+				<role>developer</role>
+			</roles>
+		</developer>
+	</developers>
+	<scm>
+		<connection>scm:svn:http://wholebrain.googlecode.com/svn/JmeVaadinApplet/trunk</connection>
+		<developerConnection>scm:svn:https://wholebrain.googlecode.com/svn/JmeVaadinApplet/trunk</developerConnection>
+		<url>http://code.google.com/p/wholebrain/source/browse/#svn/JmeVaadinApplet/trunk</url>
+	</scm>
+	<build>
+		<sourceDirectory> src </sourceDirectory>
+
+ <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>gwt-maven-plugin</artifactId>
+          <version>1.1</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+		<!--
+			Just defines how you want compilation of java classes to happen
+		-->
+		<plugins>
+			<plugin>
+				<inherited>true</inherited>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.2</version>
+				<configuration>
+					<archive>
+						<index>true</index>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<!--
+								Implementation-Title and Implementation-Version come from the
+								POM by default
+							-->
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+						</manifest>
+						<manifestEntries>
+							<!-- Package format version - do not change -->
+							<Vaadin-Package-Version>1</Vaadin-Package-Version>
+
+							<!-- Add-on specific fields to update -->
+
+							<!--
+								Implementation-Title and Implementation-Version come from the
+								POM by default
+							-->
+							<!--
+								<Implementation-Title>${pom.name}</Implementation-Title>
+								<Implementation-Version>${pom.version}</Implementation-Version>
+							-->
+
+							<!-- Comma-separated list of widgetsets in the package -->
+							<Vaadin-Widgetsets>org.vaadin.jme.widgetset.JmeVaadinAppletWidgetset</Vaadin-Widgetsets>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+
+			<!-- Compiles your custom GWT components with the GWT compiler -->
+			<!--
+				A hosted mode browser for client-side widget debugging can be run
+				with the goal gwt:run after uncommenting the correct line below. A
+				remote debugger can then be connected to port 8998. Note that e.g. a
+				Jetty server should be running with the server side parts - use the
+				goal jetty:run .
+			-->
+
+			<!--
+				A simple Jetty test server at http://localhost:8080/appletWidget can
+				be launched with the Maven goal jetty:run and stopped with
+				jetty:stop
+			-->
+			<plugin>
+				<groupId>org.mortbay.jetty</groupId>
+				<artifactId>maven-jetty-plugin</artifactId>
+				<version>6.1.19</version>
+				<configuration>
+					<stopPort>9966</stopPort>
+					<stopKey>appletWidget</stopKey>
+					<!--
+						Redeploy every x seconds if changes are detected, 0 for no
+						automatic redeployment
+					-->
+					<scanIntervalSeconds>0</scanIntervalSeconds>
+					<!-- make sure Jetty also finds the widgetset -->
+					<webAppConfig>
+						<contextPath>/appletWidget</contextPath>
+						<baseResource implementation="org.mortbay.resource.ResourceCollection">
+							<!--
+								Workaround for Maven/Jetty issue
+								http://jira.codehaus.org/browse/JETTY-680
+							-->
+							<!--
+								<resources>src/main/webapp,${project.build.directory}/${project.build.finalName}</resources>
+							-->
+							<resourcesAsCSV>WebContent,${project.build.directory}/${project.build.finalName}</resourcesAsCSV>
+						</baseResource>
+					</webAppConfig>
+				</configuration>
+			</plugin>
+
+	        <!-- run with: mvn release:prepare , and then : mvn release:perform -->
+	 		<!-- pre reqs: 'mvn' and 'svn' must both work on the command line -->
+			<!-- recommended that you do not use the embedded eclipse version of maven -->
+			<!-- instead, install the latest version on your system and run the external version -->
+			<!-- should set JAVA_HOME to point to java and "MAVEN_OPTS=-Xmx768m" -->
+			<plugin>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.0-beta-9</version>
+				<configuration>
+					<tagBase>
+						https://wholebrain.googlecode.com/svn/JmeVaadinApplet/tags
+					</tagBase>
+					<!-- triggers the profile below called 'release', which
+                         causes release:perform to send the released versions
+                         of the jars to the maven repository, rather than to
+                         the Google code SVN repository (where the tag goes)
+                    -->
+	 				<releaseProfiles>release</releaseProfiles>
+	 				<!-- solves problem of not having jars installed -->
+	 				<!-- see http://tinyurl.com/7dfbx2 for more -->
+	 				<preparationGoals>clean verify install</preparationGoals>
+                    <!-- uncomment below when ready to deploy the site regularly -->
+                    <!-- <goals>package deploy site-deploy</goals> -->
+                    <goals>deploy</goals>
+				</configuration>
+			</plugin>
+
+		</plugins>
+		<!--
+			This is needed for the sources required by the GWT compiler to be
+			included in the produced JARs
+		-->
+		<resources>
+			<resource>
+				<directory>src</directory>
+				<includes>
+				<include>**/*.java</include>
+				<include>**/*.class</include>
+				<include>**/*.xml</include>
+				</includes>
+				<excludes>
+					<exclude>**/AbstractVaadinApplet.class</exclude>
+					<exclude>**/AbstractVaadinApplet$JsPollerThread.class</exclude>
+					<exclude>**/AbstractVaadinApplet$JSCallThread.class</exclude>
+				</excludes>
+			</resource>
+			<resource>
+				 <directory>resources</directory>
+		    </resource>
+		</resources>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>com.vaadin</groupId>
+			<artifactId>vaadin</artifactId>
+			<version>6.4.4</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.gwt</groupId>
+			<artifactId>gwt-user</artifactId>
+			<version>2.0.3</version>
+			<scope>provided</scope>
+		</dependency>
+		<!--
+			This is also used by gwt-maven-plugin to deduce GWT version number.
+		-->
+	</dependencies>
+
+	<distributionManagement>
+		<repository>
+			<id>releases</id>
+			<name>Internal Releases</name>
+			<url>http://openccdb.org:8081/nexus/content/repositories/releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>snapshots</id>
+			<name>Internal Snapshots</name>
+			<url>http://openccdb.org:8081/nexus/content/repositories/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+</project>
