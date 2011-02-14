@@ -104,29 +104,22 @@ public class JavaLibraryPath {
 			tmpFile = new File(tmpDirFile.getPath() + File.separator
 					+ resourceName);
 
-			if (!tmpFile.exists()) {
-				System.out.println("Copying packageName (os): " + packageName 
-						+ " resourcename(library name): " + resourceName );
-				
-				tmpFile.createNewFile();
-				OutputStream fout = new FileOutputStream(tmpFile);
+			System.out.println("Copying packageName (os): " + packageName 
+					+ " resourcename(library name): " + resourceName );
 
-				byte[] buf = new byte[1024];
-				int len;
+			tmpFile.createNewFile();
+			OutputStream fout = new FileOutputStream(tmpFile);
 
-				while ((len = fin.read(buf)) > 0) {
-					fout.write(buf, 0, len);
-				}
+			byte[] buf = new byte[1024];
+			int len;
 
-				fin.close();
-				fout.flush();
-				fout.close();
+			while ((len = fin.read(buf)) > 0) {
+				fout.write(buf, 0, len);
 			}
-			
-			else{
-				System.out.println("DLL NOT COPIED: Resourcename " + resourceName + " already exists at " +
-						tmpFile.getAbsolutePath());
-			}
+
+			fin.close();
+			fout.flush();
+			fout.close();
 
 		}
 
