@@ -114,14 +114,6 @@ public class MainLayout extends VerticalLayout implements
         css.setWidth("300px");
         css.setHeight("300px");
         
-        DropBox box = new DropBox(css,this);
-        box.setSizeUndefined();
-        
-        panel = new Panel(box);
-        panel.setSizeUndefined();
-        panel.setWidth("100%");
-        firstPanel.addComponent(panel);
-        
         splitPanel.setFirstComponent(firstPanel);
                 
         VerticalLayout secondPanel = new VerticalLayout();
