@@ -290,7 +290,6 @@ public class VAppletIntegration extends HTML implements Paintable {
         // Compose applet appletParameters
         Map<String, String> appletParams = getAppletParameters();
         String appletParamStr = "";
-        String javaArgs = "java_arguments";
         
         if (appletParams != null) {
             for (String name : appletParams.keySet()) {
@@ -299,12 +298,12 @@ public class VAppletIntegration extends HTML implements Paintable {
             }
         }
 
+        
         return "<applet mayscript=\"true\" code=\"" + "" + getAppletClass()
                 + "" + "\" codebase=\"" + getCodebase()
                 + "\" width=\"" + width + "\" height=\"" + height
                 + "\" id=\"" + getAppletId() + "\" name=\"" + getAppletId()
                 + "\" archive=\"" + archiveAttribute + "\">" + appletParamStr
-                + "<param name=\"" + javaArgs + "\" value=\"-Xmx1024M -XX:MaxDirectMemorySize=512M\" />"
                 + "</applet>";
     }
 
